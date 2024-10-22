@@ -34,9 +34,10 @@ class MyApp extends StatelessWidget {
 //mendefinisikan MyAppState
 class MyAppState extends ChangeNotifier {
   //state MyAppState diisi dg 2 kata random yg digabung , kata random tab disimpan di variable wordpair
-  var current = WordPair.random();
+  var current = WordPair.random();//variabel pair  menyimpan kata yg sedang tampil/aktif
+  
 
-    void getNext() {
+  void getNext() {
     current = WordPair.random();
     notifyListeners();
   }
@@ -48,19 +49,21 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    var pair = appState.current;
 
 
     return Scaffold(//base (canvas) dari lsyout 
       body: Column(//di atas scaffold, ada body ,body nya diberi kolom
+      mainAxisAlignment: MainAxisAlignment.center,
         children: [//di dalam kolom, diberi teks
-          Text('A random idea:'),
-          Text(appState.current.asLowerCase),
+          BigCard(),
+          bigCard(pair: pair),
 
 
 //membuat button timbul di dalam body
                     ElevatedButton(
             onPressed: () {//fungsi yg dieksekusi butten ketika ditekan
-            
+            appState.getNext(); 
               print('button pressed!');//tampilkan teks button pressed ketika di tekan
             },
             child: Text('Next'),// berikan teks 'next' pada button (sebagai child)
@@ -68,5 +71,41 @@ class MyHomePage extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class bigCard extends StatelessWidget {
+  const bigCard({
+    super.key,
+    required this.pair,
+  });
+
+  final WordPair pair;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+        final style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary,
+    );
+    return Card(
+      color: theme.colorScheme.primary,
+      child: Padding(
+        padding: const EdgeInsets.all(20),//padding di sekitar tab
+        
+        child: Text(pair.asLowerCase, style: style, semanticsLabel: "${pair.first} ${pair.second}"),
+      ),
+    );
+  }
+}
+
+class BigCard extends StatelessWidget {
+  const BigCard({
+    super.key, 
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('A random idea:');
   }
 }
